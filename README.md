@@ -1,5 +1,5 @@
 # cse210-ww-student-template
-André Duarte Santos de Pina
+André Duarte Santos de Pina - BYU Pathway *GIT TEST*
 
 This is the starter code for students in the worldwide content version of CSE 210.
 
