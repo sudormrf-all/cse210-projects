@@ -15,7 +15,8 @@ class Program
         string lastName = Console.ReadLine();
 
         // Print a greeting message using the user's first and last name
-        // The message should be: "Hello, [first name] [last name]! Welcome to C# programming."
+        // The message should be like a reference to James Bond, where the last name is first and the first name is last.
+        // For example: "Your name is Bond, James Bond"
         Console.WriteLine($"Your name is {lastName}, {firstName} {lastName}");
 
 
