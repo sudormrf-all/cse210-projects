@@ -1,7 +1,7 @@
 // Name: André Duarte Santos de Pina
 // Class: CSE 210: Programming with Classes
 // W02 Project: Journal Program
-// Journal.cs
+// Journal.cs (CSV for Excel)
 using System;
 using System.Collections.Generic;
 using System.IO;
@@ -17,13 +17,14 @@ public class Journal
         Console.WriteLine($"\nPrompt: {prompt}");
         Console.Write("Your response: ");
         string response = Console.ReadLine();
-        Console.Write("Today's mood (e.g., happy, anxious, calm): ");
+        Console.Write("Today's mood: ");
         string mood = Console.ReadLine();
+
         _entries.Add(new Entry(
             prompt,
-            response.Replace("|", "\\|"),  // Escape special characters
+            response,
             DateTime.Now.ToString("MM/dd/yyyy"),
-            mood.Replace("|", "\\|")
+            mood
         ));
         Console.WriteLine("Entry added successfully!");
     }
@@ -37,74 +38,136 @@ public class Journal
         }
     }
 
-    public void SaveToFile()
+    // Save to CSV (Excel-friendly)
+    public void SaveToCsv()
     {
-        Console.Write("Enter filename to save: ");
+        Console.Write("Enter filename to save (e.g., journal.csv): ");
         string filename = Console.ReadLine();
 
         try
         {
-            // Save main file
             using (StreamWriter writer = new StreamWriter(filename))
             {
+                // Write CSV header
+                writer.WriteLine("Date,Prompt,Response,Mood");
                 foreach (Entry entry in _entries)
                 {
-                    writer.WriteLine($"{entry.Date}|{entry.Prompt}|{entry.Response}|{entry.Mood}");
+                    writer.WriteLine(string.Join(",",
+                        EscapeCsv(entry.Date),
+                        EscapeCsv(entry.Prompt),
+                        EscapeCsv(entry.Response),
+                        EscapeCsv(entry.Mood)
+                    ));
                 }
             }
-
-            // Create backup
-            string backupDir = "backups";
-            Directory.CreateDirectory(backupDir);
-            string backupFile = Path.Combine(backupDir, $"{DateTime.Now:yyyyMMdd_HHmmss}_backup.txt");
-            File.Copy(filename, backupFile);
-
-            Console.WriteLine($"Journal saved to {filename} (backup: {backupFile})");
+            Console.WriteLine($"Journal saved to {filename}");
         }
         catch (Exception ex)
         {
-            Console.WriteLine($"Error saving file: {ex.Message}");
+            Console.WriteLine($"Error saving: {ex.Message}");
         }
     }
 
-    public void LoadFromFile()
+    // Load from CSV (Excel-friendly)
+    public void LoadFromCsv()
     {
-        Console.Write("Enter filename to load: ");
+        Console.Write("Enter filename to load (e.g., journal.csv): ");
         string filename = Console.ReadLine();
 
         try
         {
-            string[] lines = File.ReadAllLines(filename);
-            _entries.Clear();
-
-            foreach (string line in lines)
+            using (StreamReader reader = new StreamReader(filename))
             {
-                string[] parts = line.Split(new[] { '|' }, 4);
-                if (parts.Length == 4)
+                _entries.Clear();
+                string header = reader.ReadLine(); // Skip header
+                string line;
+                while ((line = reader.ReadLine()) != null)
                 {
-                    _entries.Add(new Entry(
-                        parts[1],
-                        parts[2].Replace("\\|", "|"),  // Unescape
-                        parts[0],
-                        parts[3].Replace("\\|", "|")
-                    ));
+                    string[] fields = ParseCsvLine(line);
+                    if (fields.Length == 4)
+                    {
+                        _entries.Add(new Entry(
+                            fields[1],
+                            fields[2],
+                            fields[0],
+                            fields[3]
+                        ));
+                    }
                 }
             }
             Console.WriteLine($"Loaded {_entries.Count} entries from {filename}");
         }
-        catch (FileNotFoundException)
-        {
-            Console.WriteLine($"Error: File {filename} not found.");
-        }
         catch (Exception ex)
         {
-            Console.WriteLine($"Error loading file: {ex.Message}");
+            Console.WriteLine($"Error loading: {ex.Message}");
         }
     }
 
+    // Returns true if an entry exists for today
     public bool HasEntryForToday()
     {
         string today = DateTime.Now.ToString("MM/dd/yyyy");
         return _entries.Exists(entry => entry.Date == today);
+    }
+
+    // Properly escape a field for CSV
+    private string EscapeCsv(string field)
+    {
+        if (field == null)
+            return "";
+        bool mustQuote = field.Contains(",") || field.Contains("\"") || field.Contains("\r") || field.Contains("\n");
+        string result = field.Replace("\"", "\"\"");
+        if (mustQuote)
+            result = $"\"{result}\"";
+        return result;
+    }
+
+    // Properly parse a CSV line into fields (handles quotes and commas)
+    private string[] ParseCsvLine(string line)
+    {
+        var fields = new List<string>();
+        bool inQuotes = false;
+        string field = "";
+        for (int i = 0; i < line.Length; i++)
+        {
+            char c = line[i];
+            if (inQuotes)
+            {
+                if (c == '"')
+                {
+                    if (i + 1 < line.Length && line[i + 1] == '"')
+                    {
+                        field += '"';
+                        i++;
+                    }
+                    else
+                    {
+                        inQuotes = false;
+                    }
+                }
+                else
+                {
+                    field += c;
+                }
+            }
+            else
+            {
+                if (c == ',')
+                {
+                    fields.Add(field);
+                    field = "";
+                }
+                else if (c == '"')
+                {
+                    inQuotes = true;
+                }
+                else
+                {
+                    field += c;
+                }
+            }
+        }
+        fields.Add(field);
+        return fields.ToArray();
     }
 }

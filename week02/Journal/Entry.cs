@@ -1,7 +1,7 @@
 // Name: André Duarte Santos de Pina
 // Class: CSE 210: Programming with Classes
 // W02 Project: Journal Program
-// Entry.cs
+// Entry.cs (CSV for Excel)
 public class Entry
 {
     public string Prompt { get; }
