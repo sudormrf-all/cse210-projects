@@ -1,6 +1,16 @@
 using System;
 using System.Threading;
 
+/*
+    Activity.cs
+
+    Base class for all mindfulness activities.
+
+    Enhancements:
+    - Handles flexible duration input and timing.
+    - Provides reusable spinner and countdown animations for all activities.
+*/
+
 public class Activity
 {
     protected int _duration;
@@ -32,6 +42,7 @@ public class Activity
         ShowSpinner(3);
     }
 
+    // Enhancement: Reusable spinner animation
     protected void ShowSpinner(int seconds)
     {
         string[] animations = { "|", "/", "-", "\\" };
@@ -48,6 +59,7 @@ public class Activity
         }
     }
 
+    // Enhancement: Reusable countdown animation
     protected void ShowCountdown(int seconds)
     {
         for (int i = seconds; i > 0; i--)

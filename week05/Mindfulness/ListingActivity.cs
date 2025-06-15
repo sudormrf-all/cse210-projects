@@ -1,6 +1,14 @@
 using System;
 using System.Collections.Generic;
 
+/*
+    ListingActivity.cs
+
+    Enhancements:
+    - Randomized prompt for each session.
+    - Counts and displays the number of items listed.
+*/
+
 public class ListingActivity : Activity
 {
     private readonly List<string> _prompts = new()

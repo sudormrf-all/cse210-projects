@@ -1,9 +1,19 @@
 /*
-Mindfulness Program
-Enhancements:
-- Activity tracking system that records usage statistics
-- Session summary displayed on exit
-- Improved input validation
+    Enhancements beyond core requirements:
+
+    1. Progress Tracker:
+       - Tracks and displays the number of completed sessions for each activity type.
+
+    2. Randomized Mindfulness Prompts:
+       - Each activity presents a random prompt for variety.
+
+    3. Reusable Animation System:
+       - Shared spinner and countdown animations across all activities.
+
+    4. Flexible Duration Handling:
+       - Base class handles timing logic and user input for duration.
+
+    These features are not required by the assignment but demonstrate additional effort and learning.
 */
 
 using System;

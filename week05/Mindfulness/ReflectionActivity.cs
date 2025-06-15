@@ -1,6 +1,14 @@
 using System;
 using System.Collections.Generic;
 
+/*
+    ReflectionActivity.cs
+
+    Enhancements:
+    - Randomized reflection prompt for each session.
+    - Randomized follow-up questions during the session.
+*/
+
 public class ReflectionActivity : Activity
 {
     private readonly List<string> _prompts = new()

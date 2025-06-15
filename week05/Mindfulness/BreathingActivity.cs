@@ -1,3 +1,11 @@
+/*
+    BreathingActivity.cs
+
+    Enhancement:
+    - Uses base class timer and spinner.
+    - Alternates "Breathe in" and "Breathe out" instructions.
+*/
+
 public class BreathingActivity : Activity
 {
     public BreathingActivity() : base("Breathing",
